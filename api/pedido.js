@@ -18,11 +18,9 @@ module.exports = async (req, res) => {
       return res.status(400).json({ error: 'Faltam campos obrigatórios (Nick, Quantidade, Total)' });
     }
 
-    // Formato CORRETO que o Airtable espera: { fields: { ... } }
+    // Formato EXATO que o Airtable exige: { fields: { ... } }
     await base('Pedidos').create({
-      fields: {
-        ...fields  // Espalha todos os campos enviados (Data, Nick, etc.)
-      }
+      fields: fields  // Espalha todos os campos enviados diretamente
     });
 
     res.status(200).json({ success: true, message: 'Pedido salvo com sucesso!' });
