@@ -1,7 +1,26 @@
-{
-  "name": "nando-coins-backend",
-  "version": "1.0.0",
-  "dependencies": {
-    "airtable": "^0.12.2"
+const Airtable = require('airtable');
+
+const base = new Airtable({ apiKey: process.env.AIRTABLE_PAT })
+  .base(process.env.AIRTABLE_BASE_ID);
+
+module.exports = async (req, res) => {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Método não permitido' });
   }
-}
+
+  try {
+    const fields = req.body;
+
+    // Validação básica pra evitar erros bobos
+    if (!fields.Nick || !fields.Quantidade || !fields.Total) {
+      return res.status(400).json({ error: 'Faltam campos obrigatórios (Nick, Quantidade, Total)' });
+    }
+
+    await base('Pedidos').create(fields);  // Mude 'Pedidos' se sua tabela se chama diferente
+
+    res.status(200).json({ success: true, message: 'Pedido salvo com sucesso!' });
+  } catch (error) {
+    console.error('Erro no Airtable:', error);
+    res.status(500).json({ error: 'Erro ao salvar o pedido' });
+  }
+};
