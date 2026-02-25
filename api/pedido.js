@@ -13,15 +13,21 @@ module.exports = async (req, res) => {
   try {
     const fields = req.body; // Dados que vêm do front-end (JSON)
 
-    await base('Pedidos').create({
-  fields: {
-    ...fields,  // espalha todos os campos enviados
-  }
-}); // 'Vendas' = nome da sua tabela
+    // Validação básica para evitar erros bobos
+    if (!fields.Nick || !fields.Quantidade || !fields.Total) {
+      return res.status(400).json({ error: 'Faltam campos obrigatórios (Nick, Quantidade, Total)' });
+    }
 
-    res.status(200).json({ success: true, message: 'Pedido salvo!' });
+    // Formato CORRETO que o Airtable espera: { fields: { ... } }
+    await base('Pedidos').create({
+      fields: {
+        ...fields  // Espalha todos os campos enviados (Data, Nick, etc.)
+      }
+    });
+
+    res.status(200).json({ success: true, message: 'Pedido salvo com sucesso!' });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Erro ao salvar no Airtable' });
+    console.error('Erro no Airtable:', error);
+    res.status(500).json({ error: 'Erro ao salvar o pedido' });
   }
 };
