@@ -13,7 +13,11 @@ module.exports = async (req, res) => {
   try {
     const fields = req.body; // Dados que vêm do front-end (JSON)
 
-    await base('Vendas').create(fields); // 'Vendas' = nome da sua tabela
+    await base('Pedidos').create({
+  fields: {
+    ...fields,  // espalha todos os campos enviados
+  }
+}); // 'Vendas' = nome da sua tabela
 
     res.status(200).json({ success: true, message: 'Pedido salvo!' });
   } catch (error) {
