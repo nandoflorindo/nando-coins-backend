@@ -23,4 +23,4 @@ module.exports = async (req, res) => {
     console.error('Erro no Airtable:', error);
     res.status(500).json({ error: 'Erro ao salvar o pedido' });
   }
-};
+}
